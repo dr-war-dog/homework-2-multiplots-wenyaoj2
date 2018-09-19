@@ -2,8 +2,12 @@ import matplotlib.pyplot as plt
 import datetime
 import csv
 import numpy as np
+import pandas as pd
 data = {}
 f = open("Dataset/gun-violence.csv")
+df = pd.DataFrame.from_csv("Dataset/gun-violence.csv")
+
+print(type(df))
 csv_reader = csv.reader(f)
 header = next(csv_reader)
 for k in header:
@@ -34,7 +38,8 @@ for k in range(len(sum)):
     sum_killed = sum_killed + sum[k]
 
 print("The sum of the number of killed is : ",sum_killed)
-
+plt.plot(df["n_killed"])
+plt.show()
 num_injured = filter_gh(data, "n_injured",0)
 sum1 = []
 sum_injured = 0
@@ -45,7 +50,8 @@ for k in range(len(sum1)):
 
 print("The sum of the number of injured is : ",sum_injured)
 # result = filter_gh(data,)
-
+plt.plot(df["n_injured"])
+plt.show()
 
 def filter_equals(inp, column, value):
     output = {}
@@ -84,6 +90,24 @@ def filter_data(inp, column, value):
 result = filter_compare(filter_data(data,"date","2013/2/1"),"n_injured",0)
 result1 = filter_compare(data,"n_injured",0)
 result2 = np.array(result1)
-print(result2[0,1])
+result3 = np.array(result["n_injured"])
+sum = result3.sum(axis =0)
+print("The sum of injuried between 1.1 to 2.1: "+str(sum))
 plt.plot(result["date"],result["n_injured"],"og")
+plt.show()
 
+countcd = 0
+count = 0
+for index, row in df.iterrows():
+    countcd = countcd + row["congressional_district"]
+    if not np.isnan(row["n_guns_involved"]):
+        count = count + row["congressional_district"]
+print(str((count/countcd)*100)+"% percent of districts are involved ")
+
+new_df = df.sort_values(by="n_injured", ascending = False)
+print("the highest number of injuries are")
+count = 0
+for index, row in new_df.iterrows():
+    count = count + 1
+    if count<10:
+        print(row["address"])
